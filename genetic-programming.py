@@ -15,8 +15,9 @@ Key Features:
 - Pedagogical Comments: Code is commented to explain the 'why' behind the implementation,
   serving as an educational example.
 
-Author: [Your Name]
-Student ID: [Your Student ID]
+Author: Sebastian R. (2025)
+Course: COIT29224 - EEvolutionary Computation
+Student ID: [Student ID Hidden for security]
 Date: 06 June 2025
 """
 
