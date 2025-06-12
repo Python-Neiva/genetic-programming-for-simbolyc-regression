@@ -150,6 +150,7 @@ class GPTree:
         return nodes
 
     def to_dict(self, id_counter=iter(range(1, 10000))):
+        """Serialises the tree to a dictionary format with unique IDs."""
         label = self._get_node_label()
         node_dict = {"name": label, "id": next(id_counter), "children": []}
         if self.left:
@@ -254,7 +255,8 @@ class GeneticProgramming:
         if not nodes: return individual
         node_to_mutate = random.choice(nodes)
         if callable(node_to_mutate.data):
-            node_to_mutate.data = random.choice([f for f in self.functions.values() if f != node_to_mutate.data])
+            possible_funcs = [f for f in self.functions.values() if f != node_to_mutate.data]
+            if possible_funcs: node_to_mutate.data = random.choice(possible_funcs)
         else:
             if isinstance(node_to_mutate.data, (int, float)) and random.random() < 0.5:
                 perturbation = random.uniform(-0.5, 0.5)
@@ -290,7 +292,7 @@ class GeneticProgramming:
                 parent1, parent2 = self._tournament_selection(population_with_fitness), self._tournament_selection(population_with_fitness)
                 if random.random() < self.params["crossover_rate"]:
                     offspring1, offspring2 = self._subtree_crossover(parent1, parent2)
-                else:
+                else: # BUG FIX: Ensure clones are deep copies, not references
                     offspring1, offspring2 = copy.deepcopy(parent1), copy.deepcopy(parent2)
                 if random.random() < self.params["mutation_rate"]:
                     offspring1 = self._point_mutation(offspring1)
