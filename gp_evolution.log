@@ -1,0 +1,101 @@
+2025-06-13 00:26:16,378 - INFO - Starting Genetic Programming evolution...
+2025-06-13 00:26:16,379 - INFO - Parameters: {
+  "population_size": 300,
+  "generations": 200,
+  "min_initial_depth": 2,
+  "max_initial_depth": 4,
+  "max_tree_depth": 10,
+  "tournament_size": 5,
+  "elitism_count": 3,
+  "crossover_rate": 0.8,
+  "mutation_rate": 0.25,
+  "desired_fitness_threshold": 0.05,
+  "constant_range": [
+    -20.0,
+    20.0
+  ],
+  "integer_constants": [
+    -20,
+    -19,
+    -18,
+    -17,
+    -16,
+    -15,
+    -14,
+    -13,
+    -12,
+    -11,
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "epsilon": 1e-06
+}
+2025-06-13 00:26:16,379 - INFO - Initializing population using ramped half-and-half...
+2025-06-13 00:26:16,388 - INFO - Initialized population with 300 individuals.
+2025-06-13 00:26:16,457 - INFO - Generation 001: New best! Fitness (MSE) = 4.400795, Nodes = 7
+2025-06-13 00:26:16,584 - INFO - Generation 002: New best! Fitness (MSE) = 3.974496, Nodes = 7
+2025-06-13 00:26:16,702 - INFO - Generation 003: New best! Fitness (MSE) = 2.664593, Nodes = 21
+2025-06-13 00:26:16,795 - INFO - Generation 004: New best! Fitness (MSE) = 2.174603, Nodes = 5
+2025-06-13 00:26:16,884 - INFO - Generation 005: New best! Fitness (MSE) = 0.793651, Nodes = 5
+2025-06-13 00:26:16,976 - INFO - Generation 006: Best this gen MSE = 0.793651 (Avg: 174.56, Overall best: 0.793651)
+2025-06-13 00:26:17,075 - INFO - Generation 007: Best this gen MSE = 0.793651 (Avg: 42.43, Overall best: 0.793651)
+2025-06-13 00:26:17,186 - INFO - Generation 008: New best! Fitness (MSE) = 0.757643, Nodes = 5
+2025-06-13 00:26:17,304 - INFO - Generation 009: New best! Fitness (MSE) = 0.757382, Nodes = 11
+2025-06-13 00:26:17,411 - INFO - Generation 010: New best! Fitness (MSE) = 0.450996, Nodes = 15
+2025-06-13 00:26:17,519 - INFO - Generation 011: Best this gen MSE = 0.450996 (Avg: 26.42, Overall best: 0.450996)
+2025-06-13 00:26:17,622 - INFO - Generation 012: New best! Fitness (MSE) = 0.185578, Nodes = 15
+2025-06-13 00:26:17,727 - INFO - Generation 013: Best this gen MSE = 0.185578 (Avg: 463.43, Overall best: 0.185578)
+2025-06-13 00:26:17,841 - INFO - Generation 014: Best this gen MSE = 0.185578 (Avg: 93.86, Overall best: 0.185578)
+2025-06-13 00:26:17,962 - INFO - Generation 015: New best! Fitness (MSE) = 0.182925, Nodes = 15
+2025-06-13 00:26:18,101 - INFO - Generation 016: Best this gen MSE = 0.182925 (Avg: 22.59, Overall best: 0.182925)
+2025-06-13 00:26:18,254 - INFO - Generation 017: New best! Fitness (MSE) = 0.178371, Nodes = 33
+2025-06-13 00:26:18,420 - INFO - Generation 018: Best this gen MSE = 0.178371 (Avg: 13.55, Overall best: 0.178371)
+2025-06-13 00:26:18,594 - INFO - Generation 019: New best! Fitness (MSE) = 0.151636, Nodes = 27
+2025-06-13 00:26:18,784 - INFO - Generation 020: New best! Fitness (MSE) = 0.145023, Nodes = 27
+2025-06-13 00:26:18,996 - INFO - Generation 021: New best! Fitness (MSE) = 0.051681, Nodes = 29
+2025-06-13 00:26:19,222 - INFO - Generation 022: Best this gen MSE = 0.051681 (Avg: 10.21, Overall best: 0.051681)
+2025-06-13 00:26:19,458 - INFO - Generation 023: Best this gen MSE = 0.051681 (Avg: 10.45, Overall best: 0.051681)
+2025-06-13 00:26:19,722 - INFO - Generation 024: Best this gen MSE = 0.051681 (Avg: 21.17, Overall best: 0.051681)
+2025-06-13 00:26:19,981 - INFO - Generation 025: Best this gen MSE = 0.051681 (Avg: 9.87, Overall best: 0.051681)
+2025-06-13 00:26:20,239 - INFO - Generation 026: Best this gen MSE = 0.051681 (Avg: 9.39, Overall best: 0.051681)
+2025-06-13 00:26:20,495 - INFO - Generation 027: Best this gen MSE = 0.051681 (Avg: 10.88, Overall best: 0.051681)
+2025-06-13 00:26:20,750 - INFO - Generation 028: Best this gen MSE = 0.051681 (Avg: 12.94, Overall best: 0.051681)
+2025-06-13 00:26:21,015 - INFO - Generation 029: New best! Fitness (MSE) = 0.044781, Nodes = 35
+2025-06-13 00:26:21,015 - INFO - Desired fitness threshold reached at generation 29.
+2025-06-13 00:26:21,015 - INFO - Evolutionary process ended.
+2025-06-13 00:26:21,015 - INFO - 
+--- Final Results ---
+2025-06-13 00:26:21,016 - INFO - Best Fitness (MSE): 0.04478071
+2025-06-13 00:26:21,016 - INFO - Best Individual (Prefix): (sub (add (div y 2.000) (sub (div (sub (add (div y 2.000) (sub (div y x) (div (mul 2.000 (div x -7.251)) (add x -7.251)))) (sub 2.000 x)) -7.251) (sub 2.000 x))) (sub 2.000 x))
+2025-06-13 00:26:21,016 - INFO - Depth: 10, Nodes: 35
+2025-06-13 00:26:21,017 - INFO - Results saved to gp_results.json for visualisation.
+2025-06-13 00:26:21,017 - INFO - Total execution time: 4.64 seconds.

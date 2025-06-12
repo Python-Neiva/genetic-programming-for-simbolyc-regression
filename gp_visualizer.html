@@ -6,290 +6,334 @@
     <title>GP Result Visualiser</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .node circle { fill: #fff; stroke: steelblue; stroke-width: 3px; }
-        .node text { font: 12px sans-serif; }
-        .link { fill: none; stroke: #ccc; stroke-width: 2px; }
-        .container { max-width: 1200px; margin: auto; }
-        #tooltip {
-            position: absolute;
-            text-align: center;
-            padding: 8px;
-            font: 12px sans-serif;
-            background: lightsteelblue;
-            border: 0px;
-            border-radius: 8px;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .node circle { fill: #fff; stroke: steelblue; stroke-width: 3px; cursor: pointer; transition: stroke 0.3s; }
+        .node._children circle { stroke: #60a5fa; } /* Node with hidden children */
+        .node text { font: 12px sans-serif; pointer-events: none; }
+        .link { fill: none; stroke: #94a3b8; stroke-width: 2px; }
+        .container { max-width: 1400px; margin: auto; }
+        .mermaid { background-color: white; border-radius: 0.5rem; }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="text-slate-800">
+<body class="p-4 md:p-8">
 
-    <div class="container p-4 md:p-8">
+    <div class="container">
         <header class="text-center mb-8">
             <h1 class="text-4xl font-bold text-slate-900">Genetic Programming Result Visualiser</h1>
-            <p class="text-slate-600 mt-2">Interactive visualisation of the best-evolved expression tree.</p>
+            <p class="text-slate-600 mt-2">An interactive dashboard for analysing the GP evolutionary process and its final solution.</p>
         </header>
 
         <main>
             <div id="loader" class="text-center p-8 bg-white rounded-lg shadow-md">
                 <p class="text-lg font-medium">Loading results...</p>
-                <p class="text-slate-500 mt-2">Please ensure `gp_results.json` is in the same directory and you have run the Python script.</p>
+                <p class="text-slate-500 mt-2">Please ensure <code>gp_results.json</code> is in the same directory. Run the Python script to generate it.</p>
             </div>
             
             <div id="results-content" class="hidden">
                 <div class="grid md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h3 class="text-sm font-medium text-slate-500 uppercase">Final Fitness (MSE)</h3>
-                        <p id="final-mse" class="text-3xl font-bold text-slate-900 mt-2">0.00</p>
+                        <h3 class="text-sm font-medium text-slate-500 uppercase tracking-wider">Final Fitness (MSE)</h3>
+                        <p id="final-mse" class="text-3xl font-bold text-sky-600 mt-2">0.00</p>
                     </div>
                      <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h3 class="text-sm font-medium text-slate-500 uppercase">Tree Depth</h3>
-                        <p id="tree-depth" class="text-3xl font-bold text-slate-900 mt-2">0</p>
+                        <h3 class="text-sm font-medium text-slate-500 uppercase tracking-wider">Tree Depth</h3>
+                        <p id="tree-depth" class="text-3xl font-bold text-sky-600 mt-2">0</p>
                     </div>
                      <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                        <h3 class="text-sm font-medium text-slate-500 uppercase">Node Count</h3>
-                        <p id="node-count" class="text-3xl font-bold text-slate-900 mt-2">0</p>
+                        <h3 class="text-sm font-medium text-slate-500 uppercase tracking-wider">Node Count</h3>
+                        <p id="node-count" class="text-3xl font-bold text-sky-600 mt-2">0</p>
                     </div>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg shadow-md mb-8">
                     <h2 class="text-2xl font-bold mb-4 text-center">Best Evolved Expression Tree</h2>
-                    <p class="text-center text-slate-500 mb-4">Click to collapse/expand nodes. Drag to pan, scroll to zoom.</p>
-                    <div id="tree-container" class="w-full h-[600px] border rounded-md">
+                    <div class="text-center text-slate-500 mb-4">
+                        <p><strong>Instructions:</strong> Click a node to collapse or expand its children. Drag to pan and scroll to zoom.</p>
+                    </div>
+                    <div id="tree-container" class="w-full h-[600px] border rounded-md overflow-hidden">
                         <svg id="tree-svg" width="100%" height="100%"></svg>
                     </div>
                 </div>
                 
-                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-2xl font-bold mb-4 text-center">Fitness History</h2>
-                    <p class="text-center text-slate-500 mb-4">Best fitness (MSE) over generations. Lower is better.</p>
-                    <div id="chart-container" class="w-full h-[400px] border rounded-md">
-                         <svg id="chart-svg" width="100%" height="100%"></svg>
-                    </div>
+                <div class="bg-slate-50 p-6 rounded-lg shadow-inner">
+                     <h2 class="text-2xl font-bold mb-4 text-center">System Flowchart</h2>
+                     <div class="text-center text-slate-500 mb-6">
+                        <p>This diagram illustrates the operational flow of the Python script.</p>
+                     </div>
+                     <div class="w-full overflow-x-auto flex justify-center">
+                        <pre class="mermaid" id="mermaid-diagram-container"></pre>
+                     </div>
                 </div>
             </div>
         </main>
     </div>
     
-    <div id="tooltip"></div>
+    <script type="module">
+        // This script block handles all the dynamic content rendering.
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // --- Fetch and Render Data ---
-            fetch('gp_results.json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok. Is gp_results.json available?');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('loader').classList.add('hidden');
-                    document.getElementById('results-content').classList.remove('hidden');
-                    
-                    displayStats(data);
-                    drawTree(data.best_tree);
-                    drawChart(data.fitness_history);
-                })
-                .catch(error => {
-                    console.error('Error loading or parsing gp_results.json:', error);
-                    const loader = document.getElementById('loader');
-                    loader.innerHTML = `<p class="text-lg font-medium text-red-600">Error</p><p class="text-slate-500 mt-2">Could not load <strong>gp_results.json</strong>. Please ensure the file exists and is in the same directory as this HTML file. You must run the Python script first to generate it.</p>`;
-                });
-        });
-        
+        // --- Fetch and Render Data ---
+        async function loadData() {
+            try {
+                const response = await fetch('gp_results.json');
+                if (!response.ok) throw new Error('Could not find gp_results.json');
+                const data = await response.json();
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('results-content').classList.remove('hidden');
+                
+                displayStats(data);
+                drawTree(data.best_tree);
+                renderMermaid(); // Render the flowchart
+            } catch (error) {
+                console.error('Error loading data:', error);
+                const loader = document.getElementById('loader');
+                loader.innerHTML = `<p class="text-lg font-medium text-red-600">Error</p><p class="text-slate-500 mt-2">Could not load <strong>gp_results.json</strong>. Please ensure the file exists and is in the same directory. You must run the Python script first to generate it.</p>`;
+            }
+        }
+
         // --- Display Statistics ---
         function displayStats(data) {
             document.getElementById('final-mse').textContent = data.final_mse.toFixed(6);
-            
-            // Calculate depth and node count from the tree data
-            let nodeCount = 0;
-            let maxDepth = 0;
+            let nodeCount = 0, maxDepth = 0;
             function traverse(node, depth) {
+                if (!node) return;
                 nodeCount++;
                 maxDepth = Math.max(maxDepth, depth);
-                if (node.children) {
-                    node.children.forEach(child => traverse(child, depth + 1));
-                }
+                if (node.children) node.children.forEach(child => traverse(child, depth + 1));
             }
-            traverse(data.best_tree, 0);
-
+            if (data.best_tree) traverse(data.best_tree, 0);
             document.getElementById('tree-depth').textContent = maxDepth;
             document.getElementById('node-count').textContent = nodeCount;
         }
 
-        // --- D3.js Tree Drawing ---
+        // --- D3.js Collapsible Tree Drawing ---
         function drawTree(treeData) {
+            if (!treeData) return;
+
             const container = document.getElementById('tree-container');
             const width = container.clientWidth;
             const height = container.clientHeight;
-            
             const svg = d3.select("#tree-svg")
                 .attr("viewBox", [-width / 2, -height / 2, width, height]);
-
             const g = svg.append("g");
 
-            const root = d3.hierarchy(treeData);
-            const treeLayout = d3.tree().size([height, width * 0.8]);
-            treeLayout(root);
+            const treeLayout = d3.tree().nodeSize([40, 150]);
+            const root = d3.hierarchy(treeData, d => d.children);
+            
+            root.x0 = height / 2;
+            root.y0 = 0;
 
-            const links = g.selectAll(".link")
-                .data(root.links())
-                .enter()
-                .append("path")
-                .attr("class", "link")
-                .attr("d", d3.linkHorizontal()
-                    .x(d => d.y)
-                    .y(d => d.x)
-                );
-
-            const nodes = g.selectAll(".node")
-                .data(root.descendants())
-                .enter()
-                .append("g")
-                .attr("class", "node")
-                .attr("transform", d => `translate(${d.y},${d.x})`);
-
-            nodes.append("circle").attr("r", 10);
-
-            nodes.append("text")
-                .attr("dy", "0.31em")
-                .attr("x", d => d.children ? -15 : 15)
-                .attr("text-anchor", d => d.children ? "end" : "start")
-                .text(d => d.data.name);
-
-            // Add zoom and pan functionality
-            const zoom = d3.zoom().on("zoom", (event) => {
-                g.attr("transform", event.transform);
+            // Collapse all nodes beyond a certain depth initially for large trees
+            root.descendants().forEach(d => {
+                d._children = d.children;
+                if (d.depth > 4) {
+                    d.children = null;
+                }
             });
+
+            function update(source) {
+                const duration = d3.event && d3.event.altKey ? 2500 : 250;
+                const nodes = root.descendants().reverse();
+                const links = root.links();
+                treeLayout(root);
+
+                const node = g.selectAll("g.node")
+                    .data(nodes, d => d.data.id);
+
+                const nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", `translate(${source.y0},${source.x0})`)
+                    .attr("fill-opacity", 0)
+                    .attr("stroke-opacity", 0)
+                    .on("click", (event, d) => {
+                        d.children = d.children ? null : d._children;
+                        update(d);
+                    });
+                
+                nodeEnter.append("circle")
+                    .attr("r", 10)
+                    .attr("fill", d => d._children ? "#fff" : "#999");
+                
+                nodeEnter.append("text")
+                    .attr("dy", "0.31em")
+                    .attr("x", d => d._children ? -15 : 15)
+                    .attr("text-anchor", d => d._children ? "end" : "start")
+                    .text(d => d.data.name)
+                    .clone(true).lower()
+                    .attr("stroke-linejoin", "round")
+                    .attr("stroke-width", 3)
+                    .attr("stroke", "white");
+
+                const nodeUpdate = node.merge(nodeEnter).transition().duration(duration)
+                    .attr("transform", d => `translate(${d.y},${d.x})`)
+                    .attr("fill-opacity", 1)
+                    .attr("stroke-opacity", 1);
+                
+                nodeUpdate.select("circle")
+                    .attr("r", 10)
+                    .classed("_children", d => d._children) // For styling collapsed nodes
+
+                const nodeExit = node.exit().transition().duration(duration).remove()
+                    .attr("transform", `translate(${source.y},${source.x})`)
+                    .attr("fill-opacity", 0)
+                    .attr("stroke-opacity", 0);
+
+                const link = g.selectAll("path.link")
+                    .data(links, d => d.target.data.id);
+                
+                const linkEnter = link.enter().insert("path", "g")
+                    .attr("class", "link")
+                    .attr("d", d => {
+                        const o = {x: source.x0, y: source.y0};
+                        return d3.linkHorizontal().x(d => d.y).y(d => d.x)({source: o, target: o});
+                    });
+                
+                link.merge(linkEnter).transition().duration(duration)
+                    .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+                
+                link.exit().transition().duration(duration).remove()
+                    .attr("d", d => {
+                        const o = {x: source.x, y: source.y};
+                        return d3.linkHorizontal().x(d => d.y).y(d => d.x)({source: o, target: o});
+                    });
+
+                root.each(d => {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+            }
+            
+            update(root);
+
+            // Zoom and Pan
+            const zoom = d3.zoom().on("zoom", (event) => g.attr("transform", event.transform));
+            const bounds = g.node().getBBox();
+            const fullWidth = bounds.width;
+            const fullHeight = bounds.height;
+            const scale = 0.85 / Math.max(fullWidth / width, fullHeight / height);
+            const translate = [width / 2 - scale * (bounds.x + fullWidth / 2), height / 2 - scale * (bounds.y + fullHeight / 2)];
+            const initialTransform = d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale);
+
+            svg.call(zoom.transform, initialTransform);
             svg.call(zoom);
         }
 
-        // --- D3.js Chart Drawing ---
-        function drawChart(fitnessHistory) {
-            const container = document.getElementById('chart-container');
-            const margin = {top: 20, right: 30, bottom: 40, left: 60};
-            const width = container.clientWidth - margin.left - margin.right;
-            const height = container.clientHeight - margin.top - margin.bottom;
+        function renderMermaid() {
+            const mermaidContainer = document.getElementById('mermaid-diagram-container');
+            const mermaidDefinition = `
+graph TD
+    subgraph Execution Start
+        A["Start Script ('if __name__ == '__main__':')"] --> B["Instantiate 'GeneticProgramming' class <br> 'gp_system = GeneticProgramming(...)'"];
+        B --> C["Call gp_system.run()"];
+    end
+    subgraph "GeneticProgramming.run()"
+        C --> D["Log Start of Run & Parameters"];
+        D --> E["Call '_initialize_population()'"];
+        E_Detail["(Creates diverse trees using Ramped Half-and-Half)"];
+        E --> E_Detail;
+        E_Detail --> F{Start Generational Loop <br> 'for gen in 1 to generations'};
+        subgraph "Generational Loop (for each generation)"
+            F --> G["1. Evaluate Fitness"];
+            G_Detail["(Loop through each 'individual' in 'self.population')"];
+            G --> G_Detail;
+            G_Detail --> G1["Call '_calculate_fitness(individual)'"];
+            G1_Detail["(Calls 'individual.evaluate(x, y)' for all 49 dataset points, computes MSE)"];
+            G1 --> G1_Detail;
+            G1_Detail --> G2["Store (fitness, individual) pairs"];
+            G2 --> H["2. Sort Population by Fitness"];
+            H --> I["3. Update Best Solution"];
+            I_Check{"current_best_fitness < best_overall_fitness?"};
+            I --> I_Check;
+            I_Check -- Yes --> I_Update["Update 'best_overall_fitness' & 'best_overall_individual'"];
+            I_Update --> J_Log;
+            I_Check -- No --> J_Log["Log generation stats (best, avg, etc.)"];
+            J_Log --> K{"4. Check Termination Criteria"};
+            L_Break["Break Loop"];
+            K -- Met: (Fitness <= Threshold) OR (gen == Max Gens) --> L_Break;
+            K -- Not Met --> M["5. Create New Population"];
+            subgraph "Reproduction Sub-Loop"
+                M1["Initialize 'new_population'"];
+                M --> M1;
+                N["Elitism: Copy 'elitism_count' best individuals to 'new_population'"];
+                M1 --> N;
+                O{Loop until 'new_population' is full};
+                N --> O;
+                P["Select Parent 1 via '_tournament_selection()'"];
+                O --> P;
+                Q["Select Parent 2 via '_tournament_selection()'"];
+                P --> Q;
+                R{"random() < crossover_rate?"};
+                Q --> R;
+                S["Call '_subtree_crossover(p1, p2)' <br> (Returns two new offspring trees)"];
+                R -- Yes --> S;
+                S_Clone["Offspring = Clones of Parents"];
+                R -- No --> S_Clone;
+                T_Offspring((Offspring Created));
+                S --> T_Offspring;
+                S_Clone --> T_Offspring;
+                U{"random() < 'mutation_rate'? (for Offspring 1)"};
+                T_Offspring --> U;
+                V["Call '_point_mutation(offspring1)'"];
+                U -- Yes --> V;
+                W_MutateO2((Offspring 1 Processed));
+                U -- No --> W_MutateO2;
+                V --> W_MutateO2;
+                X{"random() < 'mutation_rate'? (for Offspring 2)"};
+                W_MutateO2 --> X;
+                Y["Call '_point_mutation(offspring2)'"];
+                X -- Yes --> Y;
+                Z_AddPop((Offspring 2 Processed));
+                X -- No --> Z_AddPop;
+                Y --> Z_AddPop;
+                AA["Add Offspring 1 & 2 to 'new_population'"];
+                Z_AddPop --> AA;
+                AA --> O;
+            end
+            BB["Replace old 'self.population' with 'new_population'"];
+            O -- Loop Finished --> BB;
+            F_NextGen["Increment generation counter"];
+            BB --> F_NextGen;
+            F_NextGen --> F;
+        end
+    end
+    Z["Call '_log_and_save_results()'"];
+    L_Break --> Z;
+    Z1["Log Final Best Solution Details"];
+    Z --> Z1;
+    Z2["Write 'gp_results.json' for visualiser"];
+    Z1 --> Z2;
+    Z_End["End of 'run()' method"];
+    Z2 --> Z_End;
+    Z_Final["Log Total Execution Time"];
+    Z_End --> Z_Final;
+    STOP[End Script];
+    Z_Final --> STOP;
+    %% Styling
+    style A fill:#f9f,stroke:#333,stroke-width:2px;
+    style C fill:#f9f,stroke:#333,stroke-width:2px;
+    style STOP fill:#f9f,stroke:#333,stroke-width:2px;
+    style L_Break fill:#d9534f,stroke:#333,stroke-width:2px;
+    style R fill:#f0ad4e,stroke:#333,stroke-width:2px;
+    style U fill:#f0ad4e,stroke:#333,stroke-width:2px;
+    style X fill:#f0ad4e,stroke:#333,stroke-width:2px;
 
-            const svg = d3.select("#chart-svg")
-                .append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
-
-            const x = d3.scaleLinear()
-                .domain([0, fitnessHistory.length - 1])
-                .range([0, width]);
-
-            const y = d3.scaleLog() // Use log scale for better visualisation of improvements
-                .domain([d3.min(fitnessHistory, d => d > 0 ? d : 1e-6), d3.max(fitnessHistory)])
-                .range([height, 0])
-                .nice();
-            
-            svg.append("g")
-                .attr("transform", `translate(0,${height})`)
-                .call(d3.axisBottom(x).ticks(10).tickFormat(d=>d+1)) // Generations 1-based
-                .append("text")
-                .attr("fill", "#000")
-                .attr("x", width / 2)
-                .attr("y", 35)
-                .attr("text-anchor", "middle")
-                .text("Generation");
-
-            svg.append("g")
-                .call(d3.axisLeft(y).ticks(5, ".1e"))
-                 .append("text")
-                .attr("fill", "#000")
-                .attr("transform", "rotate(-90)")
-                .attr("y", -margin.left + 15)
-                .attr("x", -height / 2)
-                .attr("text-anchor", "middle")
-                .text("Best Fitness (MSE - Log Scale)");
-
-            const line = d3.line()
-                .x((d, i) => x(i))
-                .y(d => y(d));
-
-            svg.append("path")
-                .datum(fitnessHistory)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("d", line);
-
-            // Add tooltip functionality
-            const tooltip = d3.select("#tooltip");
-            const focus = svg.append("g").style("display", "none");
-
-            focus.append("circle").attr("r", 5).attr("class", "focus-circle").style("fill", "steelblue");
-
-            svg.append("rect")
-                .attr("class", "overlay")
-                .attr("width", width)
-                .attr("height", height)
-                .style("fill", "none")
-                .style("pointer-events", "all")
-                .on("mouseover", () => { focus.style("display", null); tooltip.style("opacity", 1); })
-                .on("mouseout", () => { focus.style("display", "none"); tooltip.style("opacity", 0); })
-                .on("mousemove", mousemove);
-
-            function mousemove(event) {
-                const bisect = d3.bisector(i => i).left;
-                const x0 = x.invert(d3.pointer(event)[0]);
-                const i = bisect(fitnessHistory.map((d,idx)=>idx), x0, 1);
-                const d0 = fitnessHistory[i - 1];
-                const d1 = fitnessHistory[i];
-                const dataIndex = x0 - (i-1) > i - x0 ? i : i - 1;
-                
-                if (dataIndex < 0 || dataIndex >= fitnessHistory.length) return;
-
-                const fitnessVal = fitnessHistory[dataIndex];
-                
-                focus.attr("transform", `translate(${x(dataIndex)},${y(fitnessVal)})`);
-                
-                tooltip.html(`Gen: ${dataIndex + 1}<br>MSE: ${fitnessVal.toExponential(4)}`)
-                    .style("left", (event.pageX + 15) + "px")
-                    .style("top", (event.pageY - 28) + "px");
-            }
+`;
+            mermaidContainer.innerHTML = mermaidDefinition;
+            mermaid.run({
+                nodes: [mermaidContainer]
+            });
         }
+        
+        // --- Run Everything ---
+        loadData();
     </script>
 </body>
 </html>
-```
 
-### How This Definitive Solution Works and Fulfills the Assignment
-
-1.  **Run the Python Script First (`gp_interactive_v3.py`):**
-    * This script now encapsulates all logic within the `GeneticProgramming` class. This is excellent OOP practice as required by the assignment ("Use of Classes, Methods").
-    * It performs the entire evolutionary run as before.
-    * **Crucially**, it now uses the `logging` module to print progress to both the console and a file named `gp_evolution.log`. This file provides a persistent, timestamped record of each run.
-    * At the end of the run, the `_log_and_save_results` method is called. It saves the best-evolved tree (in a dictionary format) and the entire fitness history to a file named `gp_results.json`.
-
-2.  **Open the HTML File (`gp_visualiser.html`):**
-    * Open this file in a modern web browser (like Chrome, Firefox).
-    * The JavaScript code within the HTML file will automatically look for `gp_results.json` in the same directory.
-    * It reads the data and dynamically builds the dashboard:
-        * **Statistics:** It displays the final MSE, tree depth, and node count.
-        * **Interactive Tree:** It uses the powerful D3.js library to render the `best_tree` data as an SVG tree diagram. You can now **drag to pan, scroll to zoom, and click on nodes** to explore the structure. This is a vastly superior way to understand the solution compared to static ASCII art.
-        * **Fitness Chart:** It also uses D3.js to plot the `fitness_history` data, showing the improvement of the best MSE over generations. I've used a **logarithmic scale** for the y-axis, which is particularly useful for visualising fitness improvements when the initial fitness is very high and the final fitness is very low. Hovering over the chart will show a tooltip with the exact MSE for each generation.
-
-### Why This Approach Is a Definitive, Educational Example
-
-* **Professional Structure (OOP):** The `GeneticProgramming` class is a much better design than a series of standalone functions. It manages its own state (population, parameters, results) and exposes a clean `run()` method. This is how larger, real-world software is built.
-* **Separation of Concerns:** The core GP logic (Python) is now separate from the presentation/visualisation layer (HTML/JS). The Python script focuses on computation, while the HTML file focuses on user interaction. They communicate via a standard data format (JSON). This is a fundamental concept in software engineering.
-* **Enhanced Comprehension through Interactivity:** Static diagrams are good, but an interactive visualisation is transformative for understanding. Being able to zoom in on a complex part of a 41-node tree or see the exact point of fitness stagnation on a chart provides deep, intuitive insight into the algorithm's behaviour.
-* **Traceability and Analysis (Logging):** The `gp_evolution.log` file provides a formal record of your experiments. For an academic project, this is invaluable. You can go back and analyse different runs, compare the effects of parameter changes, and have a clear audit trail of your work.
-* **Meets All Assignment Criteria Excellently:**
-    * **"Correct design of the GP solution"**: Yes, the OOP structure is a very strong design.
-    * **"show the equation using ... tree"**: The interactive D3 tree is a superior fulfilment of this.
-    * **"Implementation of the following functions"**: All functions (`generate_individual`, `evaluate_individual`, `select_parents`, `crossover`, `mutation`, `calculate_mse`) are clearly implemented as methods within the `GeneticProgramming` and `GPTree` classes.
-    * **"Good coding practices"**: Yes, this version exemplifies modularity, use of classes, comments, docstrings, and a professional structure.
-    * **"Diagrams"**: The interactive chart and tree serve as dynamic, superior diagrams.
-
-This definitive version provides a complete, professional, and highly educational solution that not only meets but exceeds the requirements of the assignme
