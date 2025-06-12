@@ -1,0 +1,88 @@
+2025-06-13 00:50:23,249 - INFO - STARTING NEW GP RUN at 2025-06-13 00:50:23
+2025-06-13 00:50:23,250 - INFO - Parameters: {
+  "population_size": 300,
+  "generations": 200,
+  "min_initial_depth": 2,
+  "max_initial_depth": 4,
+  "max_tree_depth": 10,
+  "tournament_size": 5,
+  "elitism_count": 3,
+  "crossover_rate": 0.8,
+  "mutation_rate": 0.25,
+  "desired_fitness_threshold": 0.05,
+  "constant_range": [
+    -20.0,
+    20.0
+  ],
+  "integer_constants": [
+    -20,
+    -19,
+    -18,
+    -17,
+    -16,
+    -15,
+    -14,
+    -13,
+    -12,
+    -11,
+    -10,
+    -9,
+    -8,
+    -7,
+    -6,
+    -5,
+    -4,
+    -3,
+    -2,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "epsilon": 1e-06
+}
+2025-06-13 00:50:23,250 - INFO - Initializing population using ramped half-and-half...
+2025-06-13 00:50:23,254 - INFO - Initialized population with 300 individuals.
+2025-06-13 00:50:23,302 - INFO - Generation 001: New best! MSE = 1.303386, Nodes = 13
+2025-06-13 00:50:23,449 - INFO - Generation 003: New best! MSE = 0.992087, Nodes = 9
+2025-06-13 00:50:23,518 - INFO - Generation 004: New best! MSE = 0.757723, Nodes = 13
+2025-06-13 00:50:23,645 - INFO - Generation 006: New best! MSE = 0.754751, Nodes = 13
+2025-06-13 00:50:23,715 - INFO - Generation 007: New best! MSE = 0.721252, Nodes = 15
+2025-06-13 00:50:23,803 - INFO - Generation 008: New best! MSE = 0.563778, Nodes = 25
+2025-06-13 00:50:24,243 - INFO - Generation 012: New best! MSE = 0.371955, Nodes = 43
+2025-06-13 00:50:24,580 - INFO - Generation 014: New best! MSE = 0.350002, Nodes = 43
+2025-06-13 00:50:24,941 - INFO - Generation 016: New best! MSE = 0.296023, Nodes = 43
+2025-06-13 00:50:25,380 - INFO - Generation 018: New best! MSE = 0.282774, Nodes = 39
+2025-06-13 00:50:25,604 - INFO - Generation 019: New best! MSE = 0.194189, Nodes = 43
+2025-06-13 00:50:26,295 - INFO - Generation 022: New best! MSE = 0.115866, Nodes = 43
+2025-06-13 00:50:26,753 - INFO - Generation 024: New best! MSE = 0.113931, Nodes = 43
+2025-06-13 00:50:26,993 - INFO - Generation 025: New best! MSE = 0.058615, Nodes = 43
+2025-06-13 00:50:27,934 - INFO - Generation 029: New best! MSE = 0.055244, Nodes = 43
+2025-06-13 00:50:28,177 - INFO - Generation 030: New best! MSE = 0.054174, Nodes = 43
+2025-06-13 00:50:28,664 - INFO - Generation 032: New best! MSE = 0.044702, Nodes = 43
+2025-06-13 00:50:28,665 - INFO - Desired fitness threshold reached at generation 32.
+2025-06-13 00:50:28,665 - INFO - Evolutionary process ended.
+2025-06-13 00:50:28,665 - INFO - 
+--- Final Results ---
+2025-06-13 00:50:28,665 - INFO - Best Fitness (MSE): 0.04470179
+2025-06-13 00:50:28,665 - INFO - Best Individual (Prefix): (add (add (div (add (div (add (add (div y (add (div x 2.000) x)) 3.046) (sub (add x 9.000) (add 9.000 y))) (div -5.970 (sub x 9.403))) (sub (add 3.046 9.000) (add 9.706 y))) -7.156) x) (sub (add x 9.000) (add 9.706 2.000)))
+2025-06-13 00:50:28,666 - INFO - Results saved to gp_results.json for visualisation.
+2025-06-13 00:50:28,666 - INFO - Total execution time: 5.42 seconds.

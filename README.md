@@ -1,18 +1,5 @@
-# genetic-programming-for-simbolyc-regression
-
-'''mermaid
-
-    graph TD;
-        A[Start] --> B[Initialize Population];
-        B --> C[Evaluate Fitness];
-        C --> D{Termination Condition};
-        D -- Yes --> E[Return Best Individual];
-        D -- No --> F[Selection];
-        F --> G[Crossover];
-        G --> H[Mutation];
-        H --> B;
-'''
 # Genetic Programming for Symbolic Regression
+
 This repository contains a Python implementation of genetic programming for symbolic regression. The code is designed to evolve mathematical expressions that fit a given dataset.
 
 # Diagram of how it works
